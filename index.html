@@ -56,8 +56,8 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
 .hint{color:var(--tx2);font-size:13px;margin:10px 2px 0}
 #go{margin-top:20px}
 /* home */
-.me{display:flex;align-items:center;gap:14px;margin-bottom:14px;max-width:760px;margin-left:auto;margin-right:auto}
-.me>div:nth-child(2){min-width:0;flex:1}.me b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.me span{color:var(--tx2);font-size:13px}
+.mecard{display:flex;align-items:center;gap:14px;margin-bottom:14px;max-width:760px;margin-left:auto;margin-right:auto}
+.mecard>div:nth-child(2){min-width:0;flex:1}.mecard b{display:block;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mecard span{color:var(--tx2);font-size:13px}
 .lobby{display:grid;gap:14px;max-width:760px;margin:0 auto}.lobby>*{animation:rise .55s var(--ease) both}.lobby>:nth-child(2){animation-delay:.07s}
 @keyframes rise{from{opacity:0;transform:translateY(18px)}}
 @media(min-width:700px){.lobby{grid-template-columns:1fr 1fr}}
@@ -162,7 +162,7 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
 </section>
 
 <section class="screen" id="s-home">
-  <div class="me card"><div id="h-av"></div><div><b id="h-name" dir="auto"></b><span>Ready to chat</span></div><button class="btn sec sm" id="edit">Edit</button></div>
+  <div class="mecard card"><div id="h-av"></div><div><b id="h-name" dir="auto"></b><span>Ready to chat</span></div><button class="btn sec sm" id="edit">Edit</button></div>
   <div class="lobby">
     <div class="card"><h2>Create a room</h2><p class="sub">Get a code and send it to your partner.</p><button class="btn" id="create">Create room</button></div>
     <div class="card"><h2>Join a room</h2><p class="sub" style="margin-bottom:0">Enter the code you received.</p><input id="jcode" class="codein" maxlength="6" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn" id="join">Join room</button></div>
