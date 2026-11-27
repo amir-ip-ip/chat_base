@@ -454,6 +454,7 @@ setInterval(()=>{
 
 /* ---------- Chats: open, leave, delete ---------- */
 async function openChat(u){
+  if(!(history.state&&history.state.c===u))history.pushState({c:u},'');sv('dc-cur',u);
   cur=u;msgs.clear();last=null;list.innerHTML='';cancelBar();$('#epanel').hidden=true;emoBtn();
   const p=opp();$('#c-av').innerHTML=avH(p.av,p.name,'hd');$('#c-name').textContent=p.name;$('#empty').hidden=false;setStat();lock();show('s-chat');
   const ms=((await getMsgs(u))||[]).sort((a,b)=>a.ts-b.ts);if(cur!==u)return;
@@ -461,9 +462,10 @@ async function openChat(u){
   list.scrollTop=list.scrollHeight;$('#down').hidden=true;$('#dn').hidden=true;$('#dn').textContent=0;
   markSeen();dial(u);
 }
-function leave(){cur=null;list.innerHTML='';msgs.clear();show('s-home');renderHome()}
-$('#back').onclick=leave;
-let delT=0;$('#delc').onclick=()=>{if(delT){clearTimeout(delT);delT=0;delChat(cur);toast('Chat deleted');leave()}else{toast('Tap again to delete this chat');delT=setTimeout(()=>delT=0,3000)}};
+function leave(){sv('dc-cur',null);cur=null;list.innerHTML='';msgs.clear();show('s-home');renderHome()}
+const goBack=()=>history.state&&history.state.c?history.back():leave();
+$('#back').onclick=goBack;addEventListener('popstate',()=>{if(cur)leave()});
+let delT=0;$('#delc').onclick=()=>{if(delT){clearTimeout(delT);delT=0;delChat(cur);toast('Chat deleted');goBack()}else{toast('Tap again to delete this chat');delT=setTimeout(()=>delT=0,3000)}};
 
 /* ---------- Home: saved chats + search ---------- */
 const homeUi=()=>{if($('#s-home').classList.contains('on'))renderHome()};
@@ -654,6 +656,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();documen
   ((await dbop('chats','readonly',s=>s.getAll()))||[]).forEach(c=>chats.set(c.u,c));
   if(!me.name||!UR.test(me.u||'')){atab='i';if(!me.av.c)me.av.c=Math.random()*PAL.length|0;$('#name').value=me.name;$('#uname').value=me.u;paintProfile();show('s-profile');return}
   enterHome();boot();
+  const lc=ld('dc-cur',null);if(lc&&chats.has(lc)&&!new URLSearchParams(location.search).get('u'))openChat(lc);
 })();
 </script>
 </body>
