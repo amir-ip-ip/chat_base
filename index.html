@@ -165,7 +165,7 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
   <div class="me card"><div id="h-av"></div><div><b id="h-name" dir="auto"></b><span>Ready to chat</span></div><button class="btn sec sm" id="edit">Edit</button></div>
   <div class="lobby">
     <div class="card"><h2>Create a room</h2><p class="sub">Get a code and send it to your partner.</p><button class="btn" id="create">Create room</button></div>
-    <div class="card"><h2>Join a room</h2><p class="sub" style="margin-bottom:0">Enter the code you received.</p><input id="jcode" class="codein" maxlength="6" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn" id="join">Join room</button></div>
+    <div class="card"><h2>Join a room</h2><p class="sub" style="margin-bottom:0">Enter the code you received.</p><input id="jcode" class="codein" type="text" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="0000" autocomplete="off" autocapitalize="off" spellcheck="false"><button class="btn" id="join">Join room</button></div>
   </div>
 </section>
 
@@ -306,7 +306,7 @@ $('#edit').onclick=()=>{$('#name').value=me.name;atab=me.av.k;paintProfile();sho
 function enterHome(){$('#h-av').innerHTML=avH(me.av,me.name,'lg');$('#h-name').textContent=me.name;show('s-home')}
 
 /* ---------- Networking (PeerJS, reliable queue with acks) ---------- */
-const genCode=()=>Array.from({length:6},()=>'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.random()*31|0]).join('');
+const genCode=()=>String(Math.floor(Math.random()*10000)).padStart(4,'0');
 function reset(){clearTimeout(retryT);try{conn&&conn.close()}catch(e){}try{peer&&peer.destroy()}catch(e){}peer=conn=null;opp=null;everUp=false;tries=0;pend.clear();done.clear();msgs.clear();qid.clear();last=null;unread=0;$('#list').innerHTML='';cancelBar();$('#epanel').hidden=true;emoBtn();document.title='Duo Chat'}
 function openChat(){
   $('#cct').textContent=code;$('#ecode').textContent=code;$('#e-host').hidden=!isHost;$('#e-guest').hidden=isHost;$('#empty').hidden=false;
@@ -321,8 +321,9 @@ function hostPeer(){
   peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
   peer.on('connection',c=>wire(c));
 }
+$('#jcode').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\\D/g,'').slice(0,4)});
 $('#join').onclick=()=>join($('#jcode').value);
-function join(raw){const c=(raw||'').trim().toUpperCase();if(c.length<4)return toast('Enter the room code');reset();isHost=false;code=c;openChat();guestConnect()}
+function join(raw){const c=String(raw||'').trim();if(!/^\\d{4}$/.test(c))return toast('Enter the 4-digit room code');reset();isHost=false;code=c;openChat();guestConnect()}
 const retry=ms=>{clearTimeout(retryT);retryT=setTimeout(guestConnect,ms==null?2500:ms)};
 function guestConnect(){
   clearTimeout(retryT);if(!code||isHost)return;
@@ -333,7 +334,7 @@ function guestConnect(){
   }
   if(!peer.open){retry(1200);return}
   if(conn&&conn.open)return;
-  conn=peer.connect(PREFIX+code,{reliable:true});wire(conn);
+  conn=peer.connect(PREFIX+code,{reliable:true,serialization:'json'});wire(conn);
   const c0=conn;retryT=setTimeout(()=>{if(conn===c0&&!c0.open){try{c0.close()}catch(e){}conn=null;if(!everUp&&++tries>2){toast('Room not found. Check the code.');leave()}else guestConnect()}},9000);
 }
 addEventListener('online',()=>{if(!isHost&&code&&!(conn&&conn.open))retry(300)});
@@ -373,10 +374,10 @@ function onData(d,c){
   if(d.t==='m'){
     if(!okId(d.id)||m)return;
     const rp=d.rp&&okId(d.rp.id)?{id:d.rp.id,n:String(d.rp.n||'').slice(0,20),x:String(d.rp.x||'').slice(0,80)}:null;
-    add({id:d.id,from:peerIdx,k:d.k==='i'&&okImg(d.img)?'i':'t',x:String(d.x||'').slice(0,4000),img:okImg(d.img)?d.img:null,ts:+d.ts||Date.now(),rp,ed:false,del:false,rx:['',''],st:''});
+    add({id:d.id,from:peerIdx,k:d.k==='i'&&okImg(d.img)?'i':'t',x:(typeof d.x==='string'?d.x:'').slice(0,4000),img:okImg(d.img)?d.img:null,ts:+d.ts||Date.now(),rp,ed:false,del:false,rx:['',''],st:''});
     tick(900,.07);if(document.hidden){unread++;document.title='('+unread+') Duo Chat'}markSeen();
   }
-  else if(d.t==='e'){if(m&&m.from===peerIdx&&!m.del&&m.k==='t'){m.x=String(d.x||'').slice(0,4000);m.ed=true;refresh(m)}}
+  else if(d.t==='e'){if(m&&m.from===peerIdx&&!m.del&&m.k==='t'){m.x=(typeof d.x==='string'?d.x:'').slice(0,4000);m.ed=true;refresh(m)}}
   else if(d.t==='d'){if(m&&m.from===peerIdx){m.del=true;m.x='';m.img=null;refresh(m)}}
   else if(d.t==='r'){const e=d.e===''?'':String(d.e);if(m&&!m.del&&(e===''||isEmo(e))){m.rx[peerIdx]=e;refresh(m);if(e)tick(1000,.06)}}
   else if(d.t==='ty'){tyAt=Date.now()+3000;setStat();clearTimeout(tyT);tyT=setTimeout(setStat,3100)}
