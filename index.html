@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="theme-color" content="#0b0b0e"><meta name="color-scheme" content="dark">
-<title>Fuck Telegram</title>
+<title>Duo Chat</title>
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23111'/><text x='50' y='68' font-size='56' text-anchor='middle'>💬</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,6 +138,19 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
 .lb{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.92);display:grid;place-items:center;animation:in .2s;cursor:zoom-out}.lb img{max-width:96vw;max-height:92vh;border-radius:12px}
 .toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-120px);background:#2a2a30;border:1px solid var(--sep);box-shadow:var(--sh);padding:11px 18px;border-radius:99px;font-weight:600;font-size:14px;transition:transform .45s var(--ease);z-index:90;max-width:92vw;text-align:center}
 .toast.on{transform:translate(-50%,0)}
+.ufld{position:relative}.ufld>span{position:absolute;left:16px;top:0;height:50px;display:grid;place-items:center;color:var(--tx2);font-weight:600}.ufld input{padding-left:34px}
+.hw{max-width:760px;margin:0 auto 12px}
+.srch{display:flex;align-items:center;gap:8px;background:var(--fill);border-radius:14px;padding:0 12px;height:46px;color:var(--tx2)}
+.srch input{background:none;border:0!important;box-shadow:none!important;height:44px;padding:0;flex:1;min-width:0;color:var(--tx)}
+.srch button{border:0;background:none;color:var(--tx2);display:grid;place-items:center;padding:4px;cursor:pointer}
+.hl2{font-size:12.5px;font-weight:600;color:var(--tx2);margin:6px 6px 6px}
+.hlist{padding:6px}
+.cl{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;padding:10px;border-radius:16px;cursor:pointer}.cl:hover,.cl:active{background:var(--fill)}
+.cm{flex:1;min-width:0}.t1,.t2{display:flex;align-items:center;gap:8px}.t1 b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:600}.t1 time{font-size:12px;color:var(--tx2)}
+.t2 span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--tx2);font-size:14.5px;unicode-bidi:plaintext}
+.t2 s{background:var(--acc);color:#fff;border-radius:99px;min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;font-size:12px;font-weight:600;text-decoration:none}
+.avw{position:relative;flex:none}.avw i{position:absolute;right:0;bottom:0;width:13px;height:13px;border-radius:50%;background:#30d158;border:2.5px solid #1b1b20}
+.hempty{text-align:center;color:var(--tx2);padding:36px 16px;font-size:15px}
 /* responsive */
 @media(min-width:900px){.b{font-size:16.5px}.m{max-width:min(78%,560px)}}
 @media(max-width:380px){.ib{width:38px;height:38px}.ib.ghost,.ib.snd{width:40px;height:40px}.crow{gap:3px}.cc span{display:none}.cc{padding:8px 10px}.b{font-size:15.5px}.btn{font-size:15px}.etabs button{padding:5px 7px}.m{max-width:90%}}
@@ -148,11 +161,14 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
 <body>
 
 <section class="screen" id="s-profile">
-  <div class="hero"><h1>Fuck TG</h1><p class="sub" style="margin:0">Fuck (iran , telegram , proxy , vpn)</p></div>
+  <div class="hero"><h1>Duo Chat</h1><p class="sub" style="margin:0">Private, instant chat for two.</p></div>
   <div class="card pf">
     <button class="avbig" id="avbig" aria-label="Choose a photo"><span id="avv"></span><span class="cam"><i class="ei" data-i="cam" data-s="18"></i></span></button>
     <label class="lbl" for="name" style="margin-top:0">Your name</label>
-    <input id="name" dir="auto" maxlength="20" placeholder="What should we call you?" autocomplete="off" enterkeyhint="done">
+    <input id="name" dir="auto" maxlength="20" placeholder="What should we call you?" autocomplete="off" enterkeyhint="next">
+    <label class="lbl" for="uname">Username</label>
+    <div class="ufld"><span>@</span><input id="uname" maxlength="20" placeholder="username" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"></div>
+    <p class="hint">4–20 characters: a–z, 0–9 and _. People find you with it.</p>
     <div class="lbl">Profile picture</div>
     <div class="seg" id="atabs"><button data-t="p">Photo</button><button data-t="e">Emoji</button><button data-t="i">Initials</button></div>
     <div id="apanel"></div>
@@ -162,11 +178,11 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
 </section>
 
 <section class="screen" id="s-home">
-  <div class="mecard card"><div id="h-av"></div><div><b id="h-name" dir="auto"></b><span>Ready to chat</span></div><button class="btn sec sm" id="edit">Edit</button></div>
-  <div class="lobby">
-    <div class="card"><h2>Create a room</h2><p class="sub">Get a code and send it to your partner.</p><button class="btn" id="create">Create room</button></div>
-    <div class="card"><h2>Join a room</h2><p class="sub" style="margin-bottom:0">Enter the code you received.</p><input id="jcode" class="codein" maxlength="6" placeholder="CODE" autocomplete="off" autocapitalize="characters"><button class="btn" id="join">Join room</button></div>
-  </div>
+  <div class="mecard card"><div id="h-av"></div><div><b id="h-name" dir="auto"></b><span id="h-sub">Connecting…</span></div><button class="ib" id="mylink" aria-label="Copy my link"><i class="ei" data-i="link" data-s="20"></i></button><button class="btn sec sm" id="edit">Edit</button></div>
+  <div class="srch hw"><i class="ei" data-i="search" data-s="20"></i><input id="q" placeholder="Search by username" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="search"><button id="qx" hidden aria-label="Clear"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="hw" id="res"></div>
+  <div class="card hlist hw" id="clist" hidden></div>
+  <div class="hempty hw" id="hempty">No chats yet.<br>Search a username to start talking.</div>
 </section>
 
 <section class="screen" id="s-chat">
@@ -174,15 +190,11 @@ input{height:50px;padding:0 16px}input:focus,textarea:focus{border-color:rgba(59
     <button class="ib" id="back" aria-label="Leave"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
     <div id="c-av"></div>
     <div class="who"><b id="c-name" dir="auto">Waiting…</b><span class="stat" id="c-stat"><i></i><span>Offline</span></span></div>
-    <button class="cc" id="ccode" title="Copy invite link"><i class="ei" data-i="link" data-s="15"></i><span id="cct"></span></button>
+    <button class="ib" id="delc" aria-label="Delete chat"><i class="ei" data-i="trash" data-s="21"></i></button>
   </header>
   <div class="body">
     <div class="msgs" id="list"></div>
-    <div class="empty" id="empty"><div class="card">
-      <div id="e-host"><div class="rings"><span class="r"></span><span class="r"></span><span class="r"></span><i class="ei" data-i="chat" data-s="44"></i></div><p class="sub" style="margin:0">Waiting for your partner. Share this code</p><div class="bigcode" id="ecode"></div>
-        <div class="row2"><button class="btn sec" id="copyc">Copy code</button><button class="btn" id="copyl">Copy link</button></div></div>
-      <div id="e-guest" hidden><div class="rings"><span class="r"></span><span class="r"></span><span class="r"></span><i class="ei" data-i="link" data-s="40"></i></div><p class="sub" style="margin:0">Connecting to the room…</p></div>
-    </div></div>
+    <div class="empty" id="empty"><div class="card"><div class="rings"><span class="r"></span><span class="r"></span><span class="r"></span><i class="ei" data-i="chat" data-s="44"></i></div><p class="sub" style="margin:0">No messages yet. Say hello!</p></div></div>
     <button class="down" id="down" hidden aria-label="Scroll to latest"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg><s id="dn" hidden>0</s></button>
   </div>
   <div class="cmp">
@@ -222,6 +234,7 @@ edit:'<path d="M4 20h4L18.5 9.5a2.1 2.1 0 00-3-3L5 17z"/><path d="M13.5 8.5l2 2"
 trash:'<path d="M4.5 7h15M9.5 7V5.2c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2V7M6.5 7l.8 11.2c.1 1 .9 1.8 1.9 1.8h5.6c1 0 1.8-.8 1.9-1.8L17.5 7M10 11v5M14 11v5"/>',
 ban:'<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>',
 plus:'<path d="M12 5v14M5 12h14"/>',
+search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
 clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
 people:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.6-3.6 3.5-5.5 7-5.5s6.4 1.9 7 5.5"/>',
 paw:'<circle cx="7" cy="10" r="1.8"/><circle cx="12" cy="6.8" r="1.8"/><circle cx="17" cy="10" r="1.8"/><path d="M12 12.5c-2.8 0-5 2.4-5 4.3 0 1.5 1.3 2.2 2.8 1.9 1-.2 1.5-.5 2.2-.5s1.2.3 2.2.5c1.5.3 2.8-.4 2.8-1.9 0-1.9-2.2-4.3-5-4.3z"/>',
@@ -256,13 +269,13 @@ function avH(a,name,cls=''){a=cleanAv(a);const bg=PAL[a.c];
   if(a.k==='p')return `<div class="av ${cls}" style="background-image:url(${a.d})"></div>`;
   if(a.k==='e')return `<div class="av ${cls}" style="background:${bg}">${emjH(a.e)}</div>`;
   return `<div class="av ${cls}" style="background:${bg}"><b>${esc(initial(name))}</b></div>`}
-let me=ld('dc-me',{});me={name:String(me.name||'').slice(0,20),av:cleanAv(me.av)};
+let me=ld('dc-me',{});me={name:String(me.name||'').slice(0,20),av:cleanAv(me.av),u:String(me.u||'').toLowerCase().slice(0,20)};
 let rec=ld('dc-rec',[]);rec=Array.isArray(rec)?rec.filter(isEmo).slice(0,12):[];
 const DEF=['❤️','😂','😮','😢','👍','🔥'];
-let peer,conn,isHost=false,code='',opp=null,everUp=false,tries=0,retryT=0,seqN=0,unread=0,tyT=0,tyAt=0,replyTo=null,editId=null,pendImg=null,last=null;
-const SS=ld('dc-sess',null),boot=Math.random().toString(36).slice(2,8);
-const sid=(SS&&SS.sid)||Math.random().toString(36).slice(2,10),pend=new Map(),done=new Set(),msgs=new Map(),qid=new Map();
-const myIdx=()=>isHost?0:1,rid=()=>Math.random().toString(36).slice(2,12);
+let peer=null,cur=null,unread=0,tyT=0,tyAt=0,replyTo=null,editId=null,pendImg=null,last=null,peerOk=false;
+const sid=Math.random().toString(36).slice(2,10),msgs=new Map(),chats=new Map(),prof={},links=new Map(),dialing={},waiters={};
+const myIdx=()=>0,rid=()=>Math.random().toString(36).slice(2,12),UR=/^[a-z][a-z0-9_]{2,18}[a-z0-9]$/;
+const opp=()=>chats.get(cur)||prof[cur]||{name:cur||'',av:cleanAv()};
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));sizeApp()}
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2600)}
 let AC;function tick(f=700,d=.08,v=.05){try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),a=AC.createGain(),s=AC.currentTime;o.frequency.value=f;a.gain.setValueAtTime(v,s);a.gain.exponentialRampToValueAtTime(.0001,s+d);o.connect(a);a.connect(AC.destination);o.start(s);o.stop(s+d)}catch(e){}}
@@ -302,106 +315,184 @@ $('#apanel').onclick=e=>{const b=e.target.closest('button');if(!b)return;
 };
 $('#avbig').onclick=()=>{atab='p';paintProfile();$('#f-gal').click()};
 ['#f-gal','#f-cam'].forEach(s=>$(s).onchange=async e=>{const f=e.target.files[0];e.target.value='';try{const im=await loadImg(f);me.av={k:'p',d:squareData(im,256),c:me.av.c};atab='p';paintProfile(1);tick(620)}catch(_){toast("Can't read that image")}});
-$('#go').onclick=()=>{const n=$('#name').value.trim();if(!n)return toast('Enter your name first');me.name=n;sv('dc-me',me);enterHome();const r=new URLSearchParams(location.search).get('room');if(r){$('#jcode').value=r.toUpperCase();join(r)}};
-$('#edit').onclick=()=>{$('#name').value=me.name;atab=me.av.k;paintProfile();show('s-profile')};
-function enterHome(){$('#h-av').innerHTML=avH(me.av,me.name,'lg');$('#h-name').textContent=me.name;show('s-home')}
-
-/* ---------- Networking (PeerJS, reliable queue with acks) ---------- */
-const genCode=()=>Array.from({length:6},()=>'ABCDEFGHJKMNPQRSTUVWXYZ23456789'[Math.random()*31|0]).join('');
-function reset(){clearTimeout(retryT);try{conn&&conn.close()}catch(e){}try{peer&&peer.destroy()}catch(e){}peer=conn=null;opp=null;everUp=false;tries=0;pend.clear();done.clear();msgs.clear();qid.clear();last=null;unread=0;$('#list').innerHTML='';cancelBar();$('#epanel').hidden=true;emoBtn();document.title='Duo Chat'}
-function openChat(){
-  $('#cct').textContent=code;$('#ecode').textContent=code;$('#e-host').hidden=!isHost;$('#e-guest').hidden=isHost;$('#empty').hidden=false;
-  $('#c-av').innerHTML='';$('#c-name').textContent='Waiting…';setStat();lock();show('s-chat');
-  saveSess();history.pushState({chat:1},'');persist();
-}
-function leave(){reset();clearTimeout(svT);code='';clearSess();resumed=false;history.replaceState({chat:1},'',location.pathname);show('s-home')}
-$('#back').onclick=()=>{if(confirm('از چت خارج می‌شوید؟ تاریخچه پاک می‌شود.'))leave()};
-$('#create').onclick=()=>{reset();isHost=true;code=genCode();openChat();hostPeer()};
-function hostPeer(){
-  peer=new Peer(PREFIX+code,{config:ICE});
-  peer.on('error',e=>{
-    if(e.type==='unavailable-id'){
-      const p0=peer,c0=code;try{peer.destroy()}catch(_){}
-      if(resumed&&++hostTry<=20){setTimeout(()=>{if(peer===p0&&code===c0&&isHost)hostPeer()},2500);return}
-      resumed=false;code=genCode();saveSess();$('#cct').textContent=code;$('#ecode').textContent=code;hostPeer();
-    }else if(e.type!=='peer-unavailable')toast('Connection problem: '+e.type);
-  });
-  peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
-  peer.on('connection',c=>wire(c));
-}
-$('#join').onclick=()=>join($('#jcode').value);
-function join(raw){const c=(raw||'').trim().toUpperCase();if(c.length<4)return toast('Enter the room code');reset();isHost=false;code=c;openChat();guestConnect()}
-const retry=ms=>{clearTimeout(retryT);retryT=setTimeout(guestConnect,ms==null?2500:ms)};
-function guestConnect(){
-  clearTimeout(retryT);if(!code||isHost)return;
-  if(!peer||peer.destroyed){
-    peer=new Peer({config:ICE});peer.on('open',guestConnect);
-    peer.on('error',e=>{if(e.type==='peer-unavailable'){if(!everUp){toast('Room not found. Check the code.');leave()}else retry()}else if(['network','disconnected','server-error','socket-error','socket-closed'].includes(e.type))retry();else{toast('Connection problem: '+e.type);retry(4000)}});
-    peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});return;
+$('#uname').oninput=e=>{e.target.value=e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'')};
+$('#go').onclick=async()=>{
+  const n=$('#name').value.trim(),u=$('#uname').value.trim().toLowerCase();
+  if(!n)return toast('Enter your name first');
+  if(!UR.test(u))return toast('Username: 4–20 chars, a–z 0–9 _, start with a letter');
+  me.name=n;const b=$('#go');
+  if(u!==me.u||!peerOk){
+    b.disabled=true;b.textContent='Checking…';const prev=me.u;me.u=u;const r=await startPeer();b.disabled=false;b.textContent='Continue';
+    if(r!=='ok'){me.u=prev;toast(r==='taken'?'This username is taken':"Can't reach the server. Try again");if(prev)startPeer();return}
   }
-  if(!peer.open){retry(1200);return}
-  if(conn&&conn.open)return;
-  conn=peer.connect(PREFIX+code,{reliable:true});wire(conn);
-  const c0=conn;retryT=setTimeout(()=>{if(conn===c0&&!c0.open){try{c0.close()}catch(e){}conn=null;if(!everUp&&++tries>2){toast('Room not found. Check the code.');leave()}else guestConnect()}},9000);
+  sv('dc-me',me);enterHome();deep();
+};
+$('#edit').onclick=()=>{$('#name').value=me.name;$('#uname').value=me.u;atab=me.av.k;paintProfile();show('s-profile')};
+function enterHome(){$('#h-av').innerHTML=avH(me.av,me.name,'lg');$('#h-name').textContent=me.name;setNet();show('s-home');renderHome()}
+
+/* ---------- Storage (IndexedDB): chats + messages stay on this device ---------- */
+const idb=new Promise(r=>{try{const q=indexedDB.open('duochat',1);q.onupgradeneeded=()=>{const d=q.result;d.createObjectStore('chats',{keyPath:'u'});d.createObjectStore('msgs',{keyPath:'key'}).createIndex('u','u')};q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch(e){r(null)}});
+const dbop=(st,mode,fn)=>idb.then(d=>d?new Promise(res=>{try{const t=d.transaction(st,mode),rq=fn(t.objectStore(st));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>res(null);t.onabort=()=>res(null)}catch(e){res(null)}}):null);
+const putChat=c=>dbop('chats','readwrite',s=>s.put(c)),putMsg=m=>dbop('msgs','readwrite',s=>s.put(m)),getMsgs=u=>dbop('msgs','readonly',s=>s.index('u').getAll(u)),getMsg=(u,id)=>dbop('msgs','readonly',s=>s.get(u+':'+id));
+function delChat(u){chats.delete(u);dbop('chats','readwrite',s=>s.delete(u));dbop('msgs','readwrite',s=>{s.index('u').getAllKeys(u).onsuccess=e=>e.target.result.forEach(k=>s.delete(k))})}
+function touch(u,m,inc){
+  let c=chats.get(u);
+  if(!c){const p=prof[u]||{};c={u,name:p.name||u,av:cleanAv(p.av),last:'',ts:0,unread:0,pend:0};chats.set(u,c)}
+  if(m){c.last=snip(m);c.ts=m.ts}
+  if(inc)c.unread=(c.unread||0)+1;
+  putChat(c);return c;
 }
-addEventListener('online',()=>{if(!isHost&&code&&!(conn&&conn.open))retry(300)});
+async function withMsg(u,id,fn){
+  const m=u===cur?msgs.get(id):await getMsg(u,id);if(!m)return;
+  fn(m);if(u===cur)refresh(m);else putMsg(m);
+}
+
+/* ---------- Networking: every user listens on their own username ---------- */
+const okImg=s=>typeof s==='string'&&/^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s)&&s.length<1000000;
+const okId=s=>typeof s==='string'&&/^[a-z0-9]{6,16}$/.test(s);
+function setNet(){$('#h-sub').textContent=peerOk?'@'+me.u:'Connecting…';setStat()}
+function startPeer(){
+  links.forEach(c=>{try{c.close()}catch(e){}});links.clear();
+  if(peer){const o=peer;peer=null;try{o.destroy()}catch(e){}}
+  peerOk=false;setNet();
+  return new Promise(res=>{
+    const p=peer=new Peer(PREFIX+me.u,{config:ICE}),T=setTimeout(()=>res('net'),12000);
+    p.on('open',()=>{if(p!==peer)return;peerOk=true;clearTimeout(T);setNet();res('ok')});
+    p.on('error',e=>{
+      if(p!==peer)return;
+      if(e.type==='unavailable-id'){clearTimeout(T);res('taken')}
+      else if(e.type==='peer-unavailable'){const m=new RegExp('peer '+PREFIX+'([a-z0-9_]+)').exec(e.message||'');if(m)settle(m[1],false)}
+      else{setNet();setTimeout(()=>{try{if(p===peer&&p.disconnected)p.reconnect()}catch(_){}},3000)}
+    });
+    p.on('disconnected',()=>{if(p!==peer)return;peerOk=false;setNet();setTimeout(()=>{try{if(p===peer)p.reconnect()}catch(_){}},1500)});
+    p.on('connection',c=>wire(c));
+  });
+}
+async function boot(){
+  let r='net';
+  for(let i=0;i<5;i++){r=await startPeer();if(r==='ok')break;await new Promise(x=>setTimeout(x,r==='taken'?3500:2000))}
+  if(r==='ok')deep();
+  else if(r==='taken'){toast('This username is in use. Pick another one');$('#name').value=me.name;$('#uname').value=me.u;atab=me.av.k;paintProfile();show('s-profile')}
+}
+const settle=(u,ok)=>{(waiters[u]||[]).forEach(f=>f(ok));delete waiters[u];delete dialing[u]};
+const linked=u=>{const l=links.get(u);return !!(l&&l.open&&l.hi)};
+function dial(u,cb){
+  if(linked(u)){cb&&cb(true);return}
+  if(!peer||!peer.open){cb&&cb(false);return}
+  if(cb)(waiters[u]=waiters[u]||[]).push(cb);
+  if(dialing[u])return;
+  const tok=dialing[u]=Math.random(),c=peer.connect(PREFIX+u,{reliable:true});c.out=true;wire(c);
+  setTimeout(()=>{if(dialing[u]===tok){try{c.close()}catch(e){}settle(u,false)}},9000);
+}
 function wire(c){
   c.on('open',()=>c.send({t:'hello',p:{name:me.name,av:me.av},sid}));
   c.on('data',d=>onData(d,c));
-  c.on('close',()=>{if(c!==conn)return;conn=null;setStat();if(!isHost)retry(800)});
+  c.on('close',()=>{const u=String(c.peer||'').slice(PREFIX.length);if(links.get(u)===c){links.delete(u);netUi(u)}});
   c.on('error',()=>{});
 }
-function tx(o,rel=true){if(rel){o.q=boot+':'+(++seqN);pend.set(o.q,o)}if(conn&&conn.open)conn.send(o);return o}
-function flush(){pend.forEach(p=>{try{conn.send(p)}catch(e){}})}
-function setStat(){
-  const up=!!(conn&&conn.open),el=$('#c-stat'),ty=Date.now()<tyAt&&up;el.className='stat'+(up?' on':'')+(ty?' ty':'');
-  el.lastChild.textContent=!opp?'Waiting…':ty?'typing…':up?'Online':'Offline · reconnecting';
-}
-function lock(){const off=!opp;$('#ta').disabled=off;$('#send').disabled=off||!($('#ta').value.trim()||pendImg);$('#ta').placeholder=off?'Waiting for your partner…':'Message'}
-const okImg=s=>typeof s==='string'&&/^data:image\/(jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(s)&&s.length<1000000;
-const okId=s=>typeof s==='string'&&/^[a-z0-9]{6,16}$/.test(s);
+function send(u,o){const c=links.get(u);if(c&&c.open&&c.hi){try{c.send(o);return true}catch(e){}}return false}
+const tx=o=>{const ok=send(cur,o);if(!ok&&!['ty','sn','m'].includes(o.t))toast("Offline: change not delivered");return ok};
 function onData(d,c){
   if(!d||typeof d!=='object')return;
+  const u=String(c.peer||'').slice(PREFIX.length);
+  if(!UR.test(u)||u===me.u)return;
   if(d.t==='hello'){
-    if(!d.p||typeof d.sid!=='string')return;
-    if(isHost){
-      if(conn&&conn.open&&conn!==c&&opp&&opp.sid!==d.sid){c.send({t:'full'});setTimeout(()=>{try{c.close()}catch(e){}},300);return}
-      if(conn&&conn!==c){const o=conn;conn=c;try{o.close()}catch(e){}}else conn=c;
-    }
-    const first=!opp;opp={name:String(d.p.name||'Friend').slice(0,20),av:cleanAv(d.p.av),sid:d.sid};
-    everUp=true;clearTimeout(retryT);$('#empty').hidden=true;$('#c-name').textContent=opp.name;$('#c-av').innerHTML=avH(opp.av,opp.name,'hd');
-    if(first&&!resumed)sys(opp.name+' joined the chat');resumed=false;persist();
-    flush();setStat();lock();msgs.forEach(m=>{if(m.from!==myIdx())m.seenSent=false});markSeen();return;
+    if(!d.p)return;
+    const old=links.get(u),pref=!!c.out===(me.u<u);
+    if(old&&old!==c&&old.open&&old.hi){if(!pref){try{c.close()}catch(e){}settle(u,true);return}try{old.close()}catch(e){}}
+    c.hi=true;links.set(u,c);
+    const p=prof[u]={name:String(d.p.name||u).slice(0,20),av:cleanAv(d.p.av)},ch=chats.get(u);
+    if(ch){ch.name=p.name;ch.av=p.av;putChat(ch)}
+    settle(u,true);flushTo(u);netUi(u);return;
   }
-  if(d.t==='full'){toast('This room already has two people');leave();return}
-  if(c!==conn)return;
-  if(d.t==='a'){pend.delete(d.q);const id=qid.get(d.q);qid.delete(d.q);const m=id&&msgs.get(id);if(m&&m.st==='pend'){m.st='deliv';refresh(m)}return}
-  if(d.q){const dup=done.has(d.q);c.send({t:'a',q:d.q});if(dup)return;done.add(d.q);if(done.size>3000)done.delete(done.values().next().value)}
-  const m=msgs.get(d.id),peerIdx=1-myIdx();
-  if(d.t==='m'){
-    if(!okId(d.id)||m)return;
-    const rp=d.rp&&okId(d.rp.id)?{id:d.rp.id,n:String(d.rp.n||'').slice(0,20),x:String(d.rp.x||'').slice(0,80)}:null;
-    add({id:d.id,from:peerIdx,k:d.k==='i'&&okImg(d.img)?'i':'t',x:String(d.x||'').slice(0,4000),img:okImg(d.img)?d.img:null,ts:+d.ts||Date.now(),rp,ed:false,del:false,rx:['',''],st:''});
-    tick(900,.07);if(document.hidden){unread++;document.title='('+unread+') Duo Chat'}markSeen();
-  }
-  else if(d.t==='e'){if(m&&m.from===peerIdx&&!m.del&&m.k==='t'){m.x=String(d.x||'').slice(0,4000);m.ed=true;refresh(m)}}
-  else if(d.t==='d'){if(m&&m.from===peerIdx){m.del=true;m.x='';m.img=null;refresh(m)}}
-  else if(d.t==='r'){const e=d.e===''?'':String(d.e);if(m&&!m.del&&(e===''||isEmo(e))){m.rx[peerIdx]=e;refresh(m);if(e)tick(1000,.06)}}
-  else if(d.t==='ty'){tyAt=Date.now()+3000;setStat();clearTimeout(tyT);tyT=setTimeout(setStat,3100)}
-  else if(d.t==='sn'&&Array.isArray(d.ids)){d.ids.forEach(id=>{const x=msgs.get(id);if(x&&x.from===myIdx()&&x.st!=='seen'){x.st='seen';refresh(x)}})}
+  if(!c.hi||links.get(u)!==c)return;
+  if(d.t==='m')recvMsg(u,d);
+  else if(d.t==='a')withMsg(u,d.id,m=>{if(m.st==='pend')m.st='deliv'});
+  else if(d.t==='e')withMsg(u,d.id,m=>{if(m.from===1&&!m.del&&m.k==='t'){m.x=String(d.x||'').slice(0,4000);m.ed=true}});
+  else if(d.t==='d')withMsg(u,d.id,m=>{if(m.from===1){m.del=true;m.x='';m.img=null}});
+  else if(d.t==='r')withMsg(u,d.id,m=>{const e=d.e===''?'':String(d.e);if(!m.del&&(e===''||isEmo(e))){m.rx[1]=e;if(e&&u===cur)tick(1000,.06)}});
+  else if(d.t==='ty'){if(u===cur){tyAt=Date.now()+3000;setStat();clearTimeout(tyT);tyT=setTimeout(setStat,3100)}}
+  else if(d.t==='sn'&&Array.isArray(d.ids))d.ids.forEach(id=>withMsg(u,id,m=>{if(m.from===0&&m.st!=='seen')m.st='seen'}));
 }
+async function recvMsg(u,d){
+  if(!okId(d.id))return;
+  const ex=u===cur?msgs.get(d.id):await getMsg(u,d.id);
+  send(u,{t:'a',id:d.id});if(ex)return;
+  const rp=d.rp&&okId(d.rp.id)?{id:d.rp.id,n:String(d.rp.n||'').slice(0,20),x:String(d.rp.x||'').slice(0,80)}:null;
+  const m={key:u+':'+d.id,u,id:d.id,from:1,k:d.k==='i'&&okImg(d.img)?'i':'t',x:String(d.x||'').slice(0,4000),img:okImg(d.img)?d.img:null,ts:+d.ts||Date.now(),rp,ed:false,del:false,rx:['',''],st:''};
+  const seenNow=u===cur&&!document.hidden;
+  touch(u,m,!seenNow);
+  if(u===cur){add(m);markSeen()}else putMsg(m);
+  tick(900,.07);if(!seenNow){unread++;document.title='('+unread+') Duo Chat'}
+  homeUi();
+}
+async function flushTo(u){
+  const ms=u===cur?[...msgs.values()]:((await getMsgs(u))||[]),q=ms.filter(m=>m.from===0&&m.st==='pend'&&!m.del);
+  q.forEach(m=>send(u,{t:'m',id:m.id,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp}));
+  const c=chats.get(u);if(c&&c.pend!==q.length){c.pend=q.length;putChat(c)}
+  if(u===cur){msgs.forEach(m=>{if(m.from===1)m.seenSent=false});markSeen()}
+}
+function setStat(){
+  const up=!!cur&&linked(cur),el=$('#c-stat'),ty=Date.now()<tyAt&&up;el.className='stat'+(up?' on':'')+(ty?' ty':'');
+  el.lastChild.textContent=!peerOk?'Connecting…':ty?'typing…':up?'Online':'Offline';
+}
+function lock(){const off=!cur;$('#ta').disabled=off;$('#send').disabled=off||!($('#ta').value.trim()||pendImg);$('#ta').placeholder='Message'}
+function netUi(u){if(u===cur){const p=opp();$('#c-name').textContent=p.name;$('#c-av').innerHTML=avH(p.av,p.name,'hd');setStat();lock()}homeUi()}
 function markSeen(){
-  if(document.hidden||!conn||!conn.open||!$('#s-chat').classList.contains('on'))return;
-  const ids=[];msgs.forEach(m=>{if(m.from!==myIdx()&&!m.seenSent&&!m.del){m.seenSent=true;ids.push(m.id)}});
-  if(ids.length)tx({t:'sn',ids},false);
-  if(unread){unread=0;document.title='Duo Chat'}
+  if(document.hidden||!cur||!$('#s-chat').classList.contains('on'))return;
+  const ids=[];msgs.forEach(m=>{if(m.from===1&&!m.seenSent&&!m.del){m.seenSent=true;ids.push(m.id)}});
+  if(ids.length)send(cur,{t:'sn',ids});
+  const c=chats.get(cur);if(c&&c.unread){c.unread=0;putChat(c)}
+  unread=0;document.title='Duo Chat';
 }
-document.addEventListener('visibilitychange',markSeen);addEventListener('focus',markSeen);
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden||!code)return;
-  if(peer&&peer.disconnected&&!peer.destroyed){try{peer.reconnect()}catch(e){}}
-  if(!isHost&&!(conn&&conn.open))retry(200);
-});
+document.addEventListener('visibilitychange',()=>{markSeen();if(!document.hidden&&me.u&&peer&&peer.disconnected){try{peer.reconnect()}catch(e){}}});addEventListener('focus',markSeen);
+setInterval(()=>{
+  if(!peer)return;if(peer.disconnected){try{peer.reconnect()}catch(e){}return}if(!peer.open)return;
+  if(cur&&!linked(cur))dial(cur);
+  chats.forEach(c=>{if(c.pend>0&&c.u!==cur&&!linked(c.u))dial(c.u)});
+},7000);
+
+/* ---------- Chats: open, leave, delete ---------- */
+async function openChat(u){
+  if(!(history.state&&history.state.c===u))history.pushState({c:u},'');sv('dc-cur',u);
+  cur=u;msgs.clear();last=null;list.innerHTML='';cancelBar();$('#epanel').hidden=true;emoBtn();
+  const p=opp();$('#c-av').innerHTML=avH(p.av,p.name,'hd');$('#c-name').textContent=p.name;$('#empty').hidden=false;setStat();lock();show('s-chat');
+  const ms=((await getMsgs(u))||[]).sort((a,b)=>a.ts-b.ts);if(cur!==u)return;
+  ms.forEach(m=>{msgs.set(m.id,m);place(m)});
+  list.scrollTop=list.scrollHeight;$('#down').hidden=true;$('#dn').hidden=true;$('#dn').textContent=0;
+  markSeen();dial(u);
+}
+function leave(){sv('dc-cur',null);cur=null;list.innerHTML='';msgs.clear();show('s-home');renderHome()}
+const goBack=()=>history.state&&history.state.c?history.back():leave();
+$('#back').onclick=goBack;addEventListener('popstate',()=>{if(cur)leave()});
+let delT=0;$('#delc').onclick=()=>{if(delT){clearTimeout(delT);delT=0;delChat(cur);toast('Chat deleted');goBack()}else{toast('Tap again to delete this chat');delT=setTimeout(()=>delT=0,3000)}};
+
+/* ---------- Home: saved chats + search ---------- */
+const homeUi=()=>{if($('#s-home').classList.contains('on'))renderHome()};
+const qv=()=>$('#q').value.trim().replace(/^@/,'').toLowerCase();
+const fmtList=ts=>{const d=new Date(ts);return d.toDateString()===new Date().toDateString()?fmtT(ts):d.toLocaleDateString([],{day:'numeric',month:'short'})};
+const row=c=>`<button class="cl" data-u="${c.u}"><div class="avw">${avH(c.av,c.name,'lg')}${linked(c.u)?'<i></i>':''}</div><div class="cm"><div class="t1"><b dir="auto">${esc(c.name)}</b><time>${c.ts?fmtList(c.ts):''}</time></div><div class="t2"><span dir="auto">${esc(c.last||'@'+c.u)}</span>${c.unread?'<s>'+c.unread+'</s>':''}</div></div></button>`;
+function renderHome(){
+  const q=qv(),arr=[...chats.values()].filter(c=>!q||c.u.includes(q)||(c.name||'').toLowerCase().includes(q)).sort((a,b)=>b.ts-a.ts);
+  $('#clist').innerHTML=arr.map(row).join('');$('#clist').hidden=!arr.length;$('#hempty').hidden=!!(arr.length||q);
+}
+let qT=0,qSeq=0;
+function srchRun(){
+  const v=qv(),box=$('#res'),my=++qSeq;
+  if(!v||!UR.test(v)||chats.has(v)){box.innerHTML='';return}
+  if(v===me.u){box.innerHTML='<div class="hempty" style="padding:14px">That is your own username.</div>';return}
+  box.innerHTML='<div class="hl2">Global search</div><div class="hempty" style="padding:14px">Looking for @'+esc(v)+'…</div>';
+  dial(v,ok=>{if(my!==qSeq)return;box.innerHTML='<div class="hl2">Global search</div>'+(ok&&prof[v]?'<div class="card hlist">'+row({u:v,name:prof[v].name,av:prof[v].av,last:'@'+v,ts:0,unread:0})+'</div>':'<div class="hempty" style="padding:14px">No online user @'+esc(v)+'. A user can be found only while they have the app open.</div>')});
+}
+$('#q').oninput=()=>{qSeq++;renderHome();$('#res').innerHTML='';$('#qx').hidden=!$('#q').value;clearTimeout(qT);qT=setTimeout(srchRun,500)};
+$('#qx').onclick=()=>{$('#q').value='';$('#qx').hidden=true;$('#res').innerHTML='';qSeq++;renderHome()};
+$('#s-home').addEventListener('click',e=>{const b=e.target.closest('.cl');if(b){$('#q').value='';$('#qx').hidden=true;$('#res').innerHTML='';qSeq++;openChat(b.dataset.u)}});
+function deep(){
+  const u=(new URLSearchParams(location.search).get('u')||'').toLowerCase();if(!UR.test(u)||u===me.u)return;
+  history.replaceState(null,'',location.pathname);
+  if(chats.has(u))return openChat(u);
+  dial(u,ok=>ok?openChat(u):toast('@'+u+' is offline or does not exist'));
+}
 
 /* ---------- Rendering ---------- */
 const list=$('#list');
@@ -439,13 +530,14 @@ function bubble(m){
 }
 function nearBottom(){return list.scrollHeight-list.scrollTop-list.clientHeight<140}
 function toBottom(f){if(f||nearBottom())list.scrollTop=list.scrollHeight}
-function add(m){
-  m.gap=!last||last.from!==m.from;
+function add(m){place(m);putMsg(m)}
+function place(m){
+  $('#empty').hidden=true;m.gap=!last||last.from!==m.from;
   if(!last||new Date(last.ts).toDateString()!==new Date(m.ts).toDateString()){const d=document.createElement('div');d.className='day';d.textContent=dayLabel(m.ts);list.append(d);m.gap=false}
-  last=m;msgs.set(m.id,m);persist();const wasNear=nearBottom();list.append(bubble(m));
+  last=m;msgs.set(m.id,m);const wasNear=nearBottom();list.append(bubble(m));
   if(m.from===myIdx()||wasNear)list.scrollTop=list.scrollHeight;else{const n=$('#dn');n.textContent=(+n.textContent||0)+1;n.hidden=false;$('#down').hidden=false}
 }
-function refresh(m){persist();const old=list.querySelector('[data-id="'+m.id+'"]');if(old){const keep=nearBottom();old.replaceWith(bubble(m));if(keep)list.scrollTop=list.scrollHeight}}
+function refresh(m){putMsg(m);const old=list.querySelector('[data-id="'+m.id+'"]');if(old){const keep=nearBottom();old.replaceWith(bubble(m));if(keep)list.scrollTop=list.scrollHeight}}
 list.addEventListener('scroll',()=>{if(nearBottom()){$('#down').hidden=true;$('#dn').hidden=true;$('#dn').textContent=0}else $('#down').hidden=false});
 $('#down').onclick=()=>{list.scrollTop=list.scrollHeight};
 
@@ -455,30 +547,30 @@ function snip(m){return m.del?'Deleted message':m.img&&!m.x?'📷 Photo':(m.img?
 function barUi(){
   const bar=$('#xbar'),on=!!(editId||replyTo||pendImg);bar.hidden=!on;if(!on)return;
   if(editId){$('#xt').textContent='Edit message';$('#xs').textContent=msgs.get(editId).x}
-  else if(replyTo){$('#xt').textContent='Replying to '+(replyTo.from===myIdx()?'yourself':opp.name);$('#xs').textContent=snip(replyTo)}
+  else if(replyTo){$('#xt').textContent='Replying to '+(replyTo.from===myIdx()?'yourself':opp().name);$('#xs').textContent=snip(replyTo)}
   else{$('#xt').textContent='Photo';$('#xs').textContent='Add a caption (optional)'}
   $('#xi').hidden=!pendImg;if(pendImg)$('#xi').src=pendImg;
 }
 function cancelBar(keep){replyTo=null;editId=null;pendImg=null;if(!keep)ta.value='';fit();barUi();lock()}
 $('#xc').onclick=()=>cancelBar(!editId);
-function setReply(m){if(!m||m.del||!opp)return;editId=null;replyTo=m;barUi();ta.focus()}
+function setReply(m){if(!m||m.del||!cur)return;editId=null;replyTo=m;barUi();ta.focus()}
 function setEdit(m){editId=m.id;replyTo=null;pendImg=null;ta.value=m.x;barUi();fit();lock();ta.focus()}
 function fit(){ta.style.height='41px';ta.style.height=Math.min(Math.max(ta.scrollHeight,41),120)+'px'}
 function sendMsg(){
-  if(!opp)return;const x=ta.value.trim();
+  if(!cur)return;const x=ta.value.trim();
   if(editId){const m=msgs.get(editId);if(m&&x&&x!==m.x){m.x=x;m.ed=true;refresh(m);tx({t:'e',id:m.id,x})}cancelBar();return}
   if(!x&&!pendImg)return;
-  const m={id:rid(),from:myIdx(),k:pendImg?'i':'t',x,img:pendImg,ts:Date.now(),rp:replyTo?{id:replyTo.id,n:replyTo.from===myIdx()?me.name:opp.name,x:snip(replyTo)}:null,ed:false,del:false,rx:['',''],st:'pend'};
-  add(m);const o=tx({t:'m',id:m.id,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp});qid.set(o.q,m.id);cancelBar();tick(600,.05,.03);
+  const id0=rid(),m={key:cur+':'+id0,u:cur,id:id0,from:0,k:pendImg?'i':'t',x,img:pendImg,ts:Date.now(),rp:replyTo?{id:replyTo.id,n:replyTo.from===myIdx()?me.name:opp().name,x:snip(replyTo)}:null,ed:false,del:false,rx:['',''],st:'pend'};
+  add(m);const c0=touch(cur,m);c0.pend=(c0.pend||0)+1;putChat(c0);tx({t:'m',id:m.id,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp});cancelBar();tick(600,.05,.03);
 }
 $('#send').onclick=sendMsg;
 ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing&&!matchMedia('(pointer:coarse)').matches){e.preventDefault();sendMsg()}else if(e.key==='Escape')cancelBar()});
-ta.addEventListener('input',()=>{fit();lock();const n=Date.now();if(opp&&n-(ta._ty||0)>2000){ta._ty=n;tx({t:'ty'},false)}});
+ta.addEventListener('input',()=>{fit();lock();const n=Date.now();if(cur&&n-(ta._ty||0)>2000){ta._ty=n;tx({t:'ty'},false)}});
 ta.addEventListener('focus',()=>{if(matchMedia('(pointer:coarse)').matches&&!$('#epanel').hidden){$('#epanel').hidden=true;emoBtn()}});
 function delMsg(m){m.del=true;m.x='';m.img=null;refresh(m);tx({t:'d',id:m.id})}
 function pushRec(e){rec=[e,...rec.filter(x=>x!==e)].slice(0,12);sv('dc-rec',rec)}
 const quick=()=>[...new Set([...rec,...DEF])].slice(0,6);
-function react(id,e){const m=msgs.get(id);if(!m||m.del||!opp||!isEmo(e))return;const i=myIdx();m.rx[i]=m.rx[i]===e?'':e;refresh(m);tx({t:'r',id,e:m.rx[i]});if(m.rx[i])pushRec(e)}
+function react(id,e){const m=msgs.get(id);if(!m||m.del||!cur||!isEmo(e))return;const i=myIdx();m.rx[i]=m.rx[i]===e?'':e;refresh(m);tx({t:'r',id,e:m.rx[i]});if(m.rx[i])pushRec(e)}
 $('#photo').onclick=()=>$('#file').click();
 $('#file').onchange=async e=>{const f=e.target.files[0];e.target.value='';try{const im=await loadImg(f),d=fitData(im,1280);if(d.length>950000)return toast('Image is too large');editId=null;pendImg=d;barUi();lock();ta.focus()}catch(_){toast("Can't read that image")}};
 /* message interactions */
@@ -554,54 +646,17 @@ function insertEmoji(e){const s=ta.selectionStart==null?ta.value.length:ta.selec
 function emoBtn(){$('#emo').innerHTML=ico($('#epanel').hidden?'smile':'kbd',25);$('#emo').classList.toggle('on',!$('#epanel').hidden)}
 $('#emo').onclick=()=>{const p=$('#epanel'),keep=nearBottom();if(p.hidden&&!p.firstChild)p.append(picker(insertEmoji));p.hidden=!p.hidden;emoBtn();if(!p.hidden)ta.blur();else if(!matchMedia('(pointer:coarse)').matches)ta.focus();if(keep)setTimeout(()=>list.scrollTop=list.scrollHeight,30)};
 
-/* ---------- Invite helpers ---------- */
-const inviteUrl=()=>location.origin+location.pathname+'?room='+code;
+/* ---------- Invite helpers & init ---------- */
+const inviteUrl=()=>location.origin+location.pathname+'?u='+me.u;
 const copy=(t,m)=>{(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(m),()=>toast("Couldn't copy. Select it manually."))};
-$('#copyc').onclick=()=>copy(code,'Code copied');$('#copyl').onclick=()=>copy(inviteUrl(),'Invite link copied');$('#ccode').onclick=()=>copy(inviteUrl(),'Invite link copied');
+$('#mylink').onclick=()=>copy(inviteUrl(),'Your link was copied');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();document.querySelectorAll('.sheet,.lb').forEach(x=>x.remove())}});
-
-/* ---------- Session persistence (survives refresh / browser close) ---------- */
-let svT=0,resumed=false,hostTry=0;
-function saveSess(){sv('dc-sess',{code,isHost,sid})}
-function clearSess(){try{localStorage.removeItem('dc-sess');localStorage.removeItem('dc-msgs')}catch(e){}}
-function persist(){clearTimeout(svT);svT=setTimeout(persistNow,300)}
-function persistNow(){
-  if(!code)return;
-  const arr=[...msgs.values()].map(m=>({id:m.id,from:m.from,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp,ed:m.ed,del:m.del,rx:m.rx,st:m.st}));
-  const o={code,opp:opp&&{name:opp.name,av:opp.av,sid:opp.sid},arr};
-  try{localStorage.setItem('dc-msgs',JSON.stringify(o))}
-  catch(e){arr.forEach(m=>{m.img=null});try{localStorage.setItem('dc-msgs',JSON.stringify(o))}catch(_){}}
-}
-addEventListener('pagehide',persistNow);
-function resume(){
-  const st=ld('dc-msgs',null);
-  reset();isHost=!!SS.isHost;code=SS.code;resumed=true;everUp=true;hostTry=0;
-  openChat();
-  if(st&&st.code===code){
-    if(st.opp){$('#c-name').textContent=st.opp.name;$('#c-av').innerHTML=avH(cleanAv(st.opp.av),st.opp.name,'hd')}
-    (st.arr||[]).forEach(m=>{
-      if(!m||!okId(m.id))return;
-      m.rx=Array.isArray(m.rx)?m.rx:['',''];
-      if(m.k==='i'&&!m.img&&!m.x)m.x='📷';
-      add(m);
-      if(m.from===myIdx()&&m.st==='pend'&&!m.del){const o=tx({t:'m',id:m.id,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp});qid.set(o.q,m.id)}
-    });
-    if(msgs.size)$('#empty').hidden=true;
-  }
-  isHost?hostPeer():guestConnect();
-}
-history.replaceState({chat:1},'');
-addEventListener('popstate',()=>{
-  if($('#s-chat').classList.contains('on')){history.pushState({chat:1},'');toast('برای خروج از چت، دکمهٔ ← بالای صفحه را بزنید')}
-});
-
-/* ---------- Init ---------- */
-(function(){
+(async function(){
   hydrate();emoBtn();sizeApp();
-  if(!me.name){atab='i';me.av.c=Math.random()*PAL.length|0;$('#name').value='';paintProfile();show('s-profile');return}
-  const r=new URLSearchParams(location.search).get('room');
-  if(SS&&SS.code&&(!r||r.toUpperCase()===SS.code)){resume();return}
-  enterHome();if(r){$('#jcode').value=r.toUpperCase();join(r)}
+  ((await dbop('chats','readonly',s=>s.getAll()))||[]).forEach(c=>chats.set(c.u,c));
+  if(!me.name||!UR.test(me.u||'')){atab='i';if(!me.av.c)me.av.c=Math.random()*PAL.length|0;$('#name').value=me.name;$('#uname').value=me.u;paintProfile();show('s-profile');return}
+  enterHome();boot();
+  const lc=ld('dc-cur',null);if(lc&&chats.has(lc)&&!new URLSearchParams(location.search).get('u'))openChat(lc);
 })();
 </script>
 </body>
