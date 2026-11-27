@@ -321,9 +321,9 @@ function hostPeer(){
   peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
   peer.on('connection',c=>wire(c));
 }
-$('#jcode').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\\D/g,'').slice(0,4)});
+$('#jcode').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,4)});
 $('#join').onclick=()=>join($('#jcode').value);
-function join(raw){const c=String(raw||'').trim();if(!/^\\d{4}$/.test(c))return toast('Enter the 4-digit room code');reset();isHost=false;code=c;openChat();guestConnect()}
+function join(raw){const c=String(raw||'').trim();if(!/^\d{4}$/.test(c))return toast('Enter the 4-digit room code');reset();isHost=false;code=c;openChat();guestConnect()}
 const retry=ms=>{clearTimeout(retryT);retryT=setTimeout(guestConnect,ms==null?2500:ms)};
 function guestConnect(){
   clearTimeout(retryT);if(!code||isHost)return;
