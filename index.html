@@ -260,7 +260,8 @@ let me=ld('dc-me',{});me={name:String(me.name||'').slice(0,20),av:cleanAv(me.av)
 let rec=ld('dc-rec',[]);rec=Array.isArray(rec)?rec.filter(isEmo).slice(0,12):[];
 const DEF=['❤️','😂','😮','😢','👍','🔥'];
 let peer,conn,isHost=false,code='',opp=null,everUp=false,tries=0,retryT=0,seqN=0,unread=0,tyT=0,tyAt=0,replyTo=null,editId=null,pendImg=null,last=null;
-const sid=Math.random().toString(36).slice(2,10),pend=new Map(),done=new Set(),msgs=new Map(),qid=new Map();
+const SS=ld('dc-sess',null),boot=Math.random().toString(36).slice(2,8);
+const sid=(SS&&SS.sid)||Math.random().toString(36).slice(2,10),pend=new Map(),done=new Set(),msgs=new Map(),qid=new Map();
 const myIdx=()=>isHost?0:1,rid=()=>Math.random().toString(36).slice(2,12);
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));sizeApp()}
 let tt;function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('on'),2600)}
@@ -311,13 +312,20 @@ function reset(){clearTimeout(retryT);try{conn&&conn.close()}catch(e){}try{peer&
 function openChat(){
   $('#cct').textContent=code;$('#ecode').textContent=code;$('#e-host').hidden=!isHost;$('#e-guest').hidden=isHost;$('#empty').hidden=false;
   $('#c-av').innerHTML='';$('#c-name').textContent='Waiting…';setStat();lock();show('s-chat');
+  saveSess();history.pushState({chat:1},'');persist();
 }
-function leave(){reset();show('s-home')}
-$('#back').onclick=leave;
+function leave(){reset();clearTimeout(svT);code='';clearSess();resumed=false;history.replaceState({chat:1},'',location.pathname);show('s-home')}
+$('#back').onclick=()=>{if(confirm('از چت خارج می‌شوید؟ تاریخچه پاک می‌شود.'))leave()};
 $('#create').onclick=()=>{reset();isHost=true;code=genCode();openChat();hostPeer()};
 function hostPeer(){
   peer=new Peer(PREFIX+code,{config:ICE});
-  peer.on('error',e=>{if(e.type==='unavailable-id'){try{peer.destroy()}catch(_){}code=genCode();$('#cct').textContent=code;$('#ecode').textContent=code;hostPeer()}else if(e.type!=='peer-unavailable')toast('Connection problem: '+e.type)});
+  peer.on('error',e=>{
+    if(e.type==='unavailable-id'){
+      const p0=peer,c0=code;try{peer.destroy()}catch(_){}
+      if(resumed&&++hostTry<=20){setTimeout(()=>{if(peer===p0&&code===c0&&isHost)hostPeer()},2500);return}
+      resumed=false;code=genCode();saveSess();$('#cct').textContent=code;$('#ecode').textContent=code;hostPeer();
+    }else if(e.type!=='peer-unavailable')toast('Connection problem: '+e.type);
+  });
   peer.on('disconnected',()=>{try{peer.reconnect()}catch(e){}});
   peer.on('connection',c=>wire(c));
 }
@@ -343,7 +351,7 @@ function wire(c){
   c.on('close',()=>{if(c!==conn)return;conn=null;setStat();if(!isHost)retry(800)});
   c.on('error',()=>{});
 }
-function tx(o,rel=true){if(rel){o.q=sid+':'+(++seqN);pend.set(o.q,o)}if(conn&&conn.open)conn.send(o);return o}
+function tx(o,rel=true){if(rel){o.q=boot+':'+(++seqN);pend.set(o.q,o)}if(conn&&conn.open)conn.send(o);return o}
 function flush(){pend.forEach(p=>{try{conn.send(p)}catch(e){}})}
 function setStat(){
   const up=!!(conn&&conn.open),el=$('#c-stat'),ty=Date.now()<tyAt&&up;el.className='stat'+(up?' on':'')+(ty?' ty':'');
@@ -362,7 +370,7 @@ function onData(d,c){
     }
     const first=!opp;opp={name:String(d.p.name||'Friend').slice(0,20),av:cleanAv(d.p.av),sid:d.sid};
     everUp=true;clearTimeout(retryT);$('#empty').hidden=true;$('#c-name').textContent=opp.name;$('#c-av').innerHTML=avH(opp.av,opp.name,'hd');
-    if(first)sys(opp.name+' joined the chat');
+    if(first&&!resumed)sys(opp.name+' joined the chat');resumed=false;persist();
     flush();setStat();lock();msgs.forEach(m=>{if(m.from!==myIdx())m.seenSent=false});markSeen();return;
   }
   if(d.t==='full'){toast('This room already has two people');leave();return}
@@ -389,6 +397,11 @@ function markSeen(){
   if(unread){unread=0;document.title='Duo Chat'}
 }
 document.addEventListener('visibilitychange',markSeen);addEventListener('focus',markSeen);
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!code)return;
+  if(peer&&peer.disconnected&&!peer.destroyed){try{peer.reconnect()}catch(e){}}
+  if(!isHost&&!(conn&&conn.open))retry(200);
+});
 
 /* ---------- Rendering ---------- */
 const list=$('#list');
@@ -429,10 +442,10 @@ function toBottom(f){if(f||nearBottom())list.scrollTop=list.scrollHeight}
 function add(m){
   m.gap=!last||last.from!==m.from;
   if(!last||new Date(last.ts).toDateString()!==new Date(m.ts).toDateString()){const d=document.createElement('div');d.className='day';d.textContent=dayLabel(m.ts);list.append(d);m.gap=false}
-  last=m;msgs.set(m.id,m);const wasNear=nearBottom();list.append(bubble(m));
+  last=m;msgs.set(m.id,m);persist();const wasNear=nearBottom();list.append(bubble(m));
   if(m.from===myIdx()||wasNear)list.scrollTop=list.scrollHeight;else{const n=$('#dn');n.textContent=(+n.textContent||0)+1;n.hidden=false;$('#down').hidden=false}
 }
-function refresh(m){const old=list.querySelector('[data-id="'+m.id+'"]');if(old){const keep=nearBottom();old.replaceWith(bubble(m));if(keep)list.scrollTop=list.scrollHeight}}
+function refresh(m){persist();const old=list.querySelector('[data-id="'+m.id+'"]');if(old){const keep=nearBottom();old.replaceWith(bubble(m));if(keep)list.scrollTop=list.scrollHeight}}
 list.addEventListener('scroll',()=>{if(nearBottom()){$('#down').hidden=true;$('#dn').hidden=true;$('#dn').textContent=0}else $('#down').hidden=false});
 $('#down').onclick=()=>{list.scrollTop=list.scrollHeight};
 
@@ -541,15 +554,54 @@ function insertEmoji(e){const s=ta.selectionStart==null?ta.value.length:ta.selec
 function emoBtn(){$('#emo').innerHTML=ico($('#epanel').hidden?'smile':'kbd',25);$('#emo').classList.toggle('on',!$('#epanel').hidden)}
 $('#emo').onclick=()=>{const p=$('#epanel'),keep=nearBottom();if(p.hidden&&!p.firstChild)p.append(picker(insertEmoji));p.hidden=!p.hidden;emoBtn();if(!p.hidden)ta.blur();else if(!matchMedia('(pointer:coarse)').matches)ta.focus();if(keep)setTimeout(()=>list.scrollTop=list.scrollHeight,30)};
 
-/* ---------- Invite helpers & init ---------- */
+/* ---------- Invite helpers ---------- */
 const inviteUrl=()=>location.origin+location.pathname+'?room='+code;
 const copy=(t,m)=>{(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(m),()=>toast("Couldn't copy. Select it manually."))};
 $('#copyc').onclick=()=>copy(code,'Code copied');$('#copyl').onclick=()=>copy(inviteUrl(),'Invite link copied');$('#ccode').onclick=()=>copy(inviteUrl(),'Invite link copied');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMenu();document.querySelectorAll('.sheet,.lb').forEach(x=>x.remove())}});
+
+/* ---------- Session persistence (survives refresh / browser close) ---------- */
+let svT=0,resumed=false,hostTry=0;
+function saveSess(){sv('dc-sess',{code,isHost,sid})}
+function clearSess(){try{localStorage.removeItem('dc-sess');localStorage.removeItem('dc-msgs')}catch(e){}}
+function persist(){clearTimeout(svT);svT=setTimeout(persistNow,300)}
+function persistNow(){
+  if(!code)return;
+  const arr=[...msgs.values()].map(m=>({id:m.id,from:m.from,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp,ed:m.ed,del:m.del,rx:m.rx,st:m.st}));
+  const o={code,opp:opp&&{name:opp.name,av:opp.av,sid:opp.sid},arr};
+  try{localStorage.setItem('dc-msgs',JSON.stringify(o))}
+  catch(e){arr.forEach(m=>{m.img=null});try{localStorage.setItem('dc-msgs',JSON.stringify(o))}catch(_){}}
+}
+addEventListener('pagehide',persistNow);
+function resume(){
+  const st=ld('dc-msgs',null);
+  reset();isHost=!!SS.isHost;code=SS.code;resumed=true;everUp=true;hostTry=0;
+  openChat();
+  if(st&&st.code===code){
+    if(st.opp){$('#c-name').textContent=st.opp.name;$('#c-av').innerHTML=avH(cleanAv(st.opp.av),st.opp.name,'hd')}
+    (st.arr||[]).forEach(m=>{
+      if(!m||!okId(m.id))return;
+      m.rx=Array.isArray(m.rx)?m.rx:['',''];
+      if(m.k==='i'&&!m.img&&!m.x)m.x='📷';
+      add(m);
+      if(m.from===myIdx()&&m.st==='pend'&&!m.del){const o=tx({t:'m',id:m.id,k:m.k,x:m.x,img:m.img,ts:m.ts,rp:m.rp});qid.set(o.q,m.id)}
+    });
+    if(msgs.size)$('#empty').hidden=true;
+  }
+  isHost?hostPeer():guestConnect();
+}
+history.replaceState({chat:1},'');
+addEventListener('popstate',()=>{
+  if($('#s-chat').classList.contains('on')){history.pushState({chat:1},'');toast('برای خروج از چت، دکمهٔ ← بالای صفحه را بزنید')}
+});
+
+/* ---------- Init ---------- */
 (function(){
   hydrate();emoBtn();sizeApp();
   if(!me.name){atab='i';me.av.c=Math.random()*PAL.length|0;$('#name').value='';paintProfile();show('s-profile');return}
-  enterHome();const r=new URLSearchParams(location.search).get('room');if(r){$('#jcode').value=r.toUpperCase();join(r)}
+  const r=new URLSearchParams(location.search).get('room');
+  if(SS&&SS.code&&(!r||r.toUpperCase()===SS.code)){resume();return}
+  enterHome();if(r){$('#jcode').value=r.toUpperCase();join(r)}
 })();
 </script>
 </body>
