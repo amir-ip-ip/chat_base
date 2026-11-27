@@ -1,0 +1,13 @@
+{
+  "name": "chat_base",
+  "version": "1.0.0",
+  "description": "Chat application",
+  "type": "module",
+  "scripts": {
+    "dev": "echo 'Development server for static HTML'",
+    "build": "echo 'No build step required for static HTML'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.1"
+  }
+}
